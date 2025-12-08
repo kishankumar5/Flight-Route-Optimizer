@@ -152,16 +152,8 @@ def build_graph_from_json_data(flights: List[Flight]) -> Graph:
 
 
 def calculate_total_travel_time(route: List[Tuple[str, Flight]], start: str) -> Tuple[int, int]:
-    """
-    Calculate total travel time for a route including flight time and layovers.
+    #Calculate total travel time for a route including flight time and layovers.    
     
-    Args:
-        route: List of (airport, flight) tuples representing the route
-        start: Starting airport code
-        
-    Returns:
-        Tuple of (total_flight_time_minutes, total_layover_time_minutes)
-    """
     if not route:
         return 0, 0
     
@@ -187,15 +179,8 @@ def calculate_total_travel_time(route: List[Tuple[str, Flight]], start: str) -> 
 
 
 def format_duration(minutes: float) -> str:
-    """
-    Format duration in minutes to human-readable string.
+    #Format duration in minutes to human-readable string.
     
-    Args:
-        minutes: Duration in minutes
-        
-    Returns:
-        Formatted string like "5h 30m"
-    """
     hours = int(minutes // 60)
     mins = int(minutes % 60)
     
@@ -282,7 +267,7 @@ def available_flights(
 
     
 def eliminate_backward_travel(current_airport, next_airport, destination, distance_data, source) -> bool:
-    """Function to eliminate backward travel (zig-zag routes)"""
+    #Function to eliminate backward travel (zig-zag routes)
     
     try:
         # If next layover is the destination, always allow it
