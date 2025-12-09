@@ -189,15 +189,7 @@ def calculate_total_travel_time(route: List[Tuple[str, Flight]], start: str) -> 
 
 
 def format_duration(minutes: float) -> str:
-    """
-    Format duration in minutes to human-readable string.
-    
-    Args:
-        minutes: Duration in minutes
-        
-    Returns:
-        Formatted string like "5h 30m"
-    """
+
     hours = int(minutes // 60)
     mins = int(minutes % 60)
     
@@ -210,8 +202,6 @@ def format_duration(minutes: float) -> str:
 
 
 def parse_time(time_string: str) -> datetime:
-    # Convert time string '02:30' to datetime object to facilitate time calculations
-    
     return datetime.strptime(time_string, "%H:%M")
 
 
