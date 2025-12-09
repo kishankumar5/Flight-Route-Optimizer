@@ -11,7 +11,7 @@ from flight_optimizer_backend import (
     calculate_total_travel_time,
     format_duration 
 )
-
+from bfs_optimizer import bfs_routes_iterative
 
 # ============================================================================
 # CONFIGURATION
@@ -316,8 +316,17 @@ def main():
                 # BFS with layover limit
                 # remove the below two lines after the comments and replace it with
                 # bfs implementation so that when checked it routes to bfs
-                optimal_route = getOptimalRoute(graph,source,destination,'cost')
-                routes = [optimal_route] if optimal_route else []
+                route_search_fn = bfs_routes_iterative
+                routes = route_search_fn(
+                    graph,
+                    distance_data,
+                    source,
+                    destination,
+                    max_layovers=max_layovers,
+                    min_layover=90,
+                    user_departure_time=user_departure_time,
+                    travel_day=travel_day
+                )
             elif st.session_state.get_cheapest_route:
                 optimal_route = getOptimalRoute(graph,source,destination,'cost')
                 routes = [optimal_route] if optimal_route else []
