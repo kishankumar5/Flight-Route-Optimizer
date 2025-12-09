@@ -312,10 +312,11 @@ def main():
             user_departure_time = departure_time.strftime("%H:%M") if departure_time else None
             
             # Execute route search
-            if st.session_state.use_max_layovers:
+            if st.session_state.use_max_layovers and max_layovers <= 2:
                 # BFS with layover limit
                 # remove the below two lines after the comments and replace it with
                 # bfs implementation so that when checked it routes to bfs
+                print('Using BFS for limited layovers search')
                 route_search_fn = bfs_routes_iterative
                 routes = route_search_fn(
                     graph,
@@ -328,12 +329,15 @@ def main():
                     travel_day=travel_day
                 )
             elif st.session_state.get_cheapest_route:
+                print('Using Dijkstra for cheapest route search')
                 optimal_route = getOptimalRoute(graph,source,destination,'cost')
                 routes = [optimal_route] if optimal_route else []
             elif st.session_state.get_fastest_route:
+                print('Using Dijkstra for fastest route search')
                 optimal_route = getOptimalRoute(graph,source,destination,'duration')
                 routes = [optimal_route] if optimal_route else []
             else:
+                print('Using DFS for default route search')
                 routes = dfs_routes_iterative(
                     graph,
                     distance_data,
