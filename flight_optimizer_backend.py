@@ -61,6 +61,90 @@ print(json.dumps(flights[0], indent=1))
 distance_data = {
     "SFO": {
         "SFO": 0, "BOM": 8450, "LHR": 5360, "DXB": 8090, "PEK": 5570, 
+        "SIN": 8446, "JFK": 2586, "CDG": 5565, "FRA": 5690, "NRT": 5120,
+        "SYD": 7417, "LAX": 337, "HKG": 6927, "IST": 6703, "AUH": 8120, "DOH": 8145
+    },
+    "BOM": {
+        "SFO": 8450, "BOM": 0, "LHR": 4470, "DXB": 1195, "PEK": 2900, 
+        "SIN": 2450, "JFK": 7790, "CDG": 4400, "FRA": 4210, "NRT": 4280,
+        "SYD": 6306, "LAX": 8670, "HKG": 2340, "IST": 3140, "AUH": 1210, "DOH": 1260
+    },
+    "LHR": {
+        "SFO": 5360, "BOM": 4470, "LHR": 0, "DXB": 3410, "PEK": 5090, 
+        "SIN": 6760, "JFK": 3450, "CDG": 215, "FRA": 395, "NRT": 5950,
+        "SYD": 10562, "LAX": 5456, "HKG": 5994, "IST": 1560, "AUH": 3420, "DOH": 3250
+    },
+    "DXB": {
+        "SFO": 8090, "BOM": 1195, "LHR": 3410, "DXB": 0, "PEK": 3950, 
+        "SIN": 3650, "JFK": 6840, "CDG": 3250, "FRA": 3000, "NRT": 4900,
+        "SYD": 7481, "LAX": 8339, "HKG": 3780, "IST": 2000, "AUH": 70, "DOH": 235
+    },
+    "PEK": {
+        "SFO": 5570, "BOM": 2900, "LHR": 5090, "DXB": 3950, "PEK": 0, 
+        "SIN": 2790, "JFK": 6800, "CDG": 5060, "FRA": 4810, "NRT": 1320,
+        "SYD": 5650, "LAX": 6250, "HKG": 1240, "IST": 4070, "AUH": 3890, "DOH": 3900
+    },
+    "SIN": {
+        "SFO": 8446, "BOM": 2450, "LHR": 6760, "DXB": 3650, "PEK": 2790, 
+        "SIN": 0, "JFK": 9530, "CDG": 6750, "FRA": 6400, "NRT": 3330,
+        "SYD": 3918, "LAX": 8770, "HKG": 1605, "IST": 5140, "AUH": 3660, "DOH": 3680
+    },
+    "JFK": {
+        "SFO": 2586, "BOM": 7790, "LHR": 3450, "DXB": 6840, "PEK": 6800, 
+        "SIN": 9530, "JFK": 0, "CDG": 3635, "FRA": 3850, "NRT": 6730,
+        "SYD": 9950, "LAX": 2475, "HKG": 8054, "IST": 5010, "AUH": 6860, "DOH": 6690
+    },
+    "CDG": {
+        "SFO": 5565, "BOM": 4400, "LHR": 215, "DXB": 3250, "PEK": 5060, 
+        "SIN": 6750, "JFK": 3635, "CDG": 0, "FRA": 280, "NRT": 6050,
+        "SYD": 10544, "LAX": 5658, "HKG": 5980, "IST": 1400, "AUH": 3255, "DOH": 3090
+    },
+    "FRA": {
+        "SFO": 5690, "BOM": 4210, "LHR": 395, "DXB": 3000, "PEK": 4810, 
+        "SIN": 6400, "JFK": 3850, "CDG": 280, "FRA": 0, "NRT": 5930,
+        "SYD": 10250, "LAX": 5785, "HKG": 5680, "IST": 1200, "AUH": 3005, "DOH": 2850
+    },
+    "NRT": {
+        "SFO": 5120, "BOM": 4280, "LHR": 5950, "DXB": 4900, "PEK": 1320, 
+        "SIN": 3330, "JFK": 6730, "CDG": 6050, "FRA": 5930, "NRT": 0,
+        "SYD": 4863, "LAX": 5478, "HKG": 1823, "IST": 5560, "AUH": 4870, "DOH": 4710
+    },
+    "SYD": {
+        "SFO": 7417, "BOM": 6306, "LHR": 10562, "DXB": 7481, "PEK": 5650,
+        "SIN": 3918, "JFK": 9950, "CDG": 10544, "FRA": 10250, "NRT": 4863,
+        "SYD": 0, "LAX": 7488, "HKG": 4581, "IST": 9290, "AUH": 7460, "DOH": 7485
+    },
+    "LAX": {
+        "SFO": 337, "BOM": 8670, "LHR": 5456, "DXB": 8339, "PEK": 6250,
+        "SIN": 8770, "JFK": 2475, "CDG": 5658, "FRA": 5785, "NRT": 5478,
+        "SYD": 7488, "LAX": 0, "HKG": 7260, "IST": 6910, "AUH": 8350, "DOH": 8380
+    },
+    "HKG": {
+        "SFO": 6927, "BOM": 2340, "LHR": 5994, "DXB": 3780, "PEK": 1240,
+        "SIN": 1605, "JFK": 8054, "CDG": 5980, "FRA": 5680, "NRT": 1823,
+        "SYD": 4581, "LAX": 7260, "HKG": 0, "IST": 4650, "AUH": 3720, "DOH": 3750
+    },
+    "IST": {
+        "SFO": 6703, "BOM": 3140, "LHR": 1560, "DXB": 2000, "PEK": 4070,
+        "SIN": 5140, "JFK": 5010, "CDG": 1400, "FRA": 1200, "NRT": 5560,
+        "SYD": 9290, "LAX": 6910, "HKG": 4650, "IST": 0, "AUH": 1930, "DOH": 1780
+    },
+    "AUH": {
+        "SFO": 8120, "BOM": 1210, "LHR": 3420, "DXB": 70, "PEK": 3890,
+        "SIN": 3660, "JFK": 6860, "CDG": 3255, "FRA": 3005, "NRT": 4870,
+        "SYD": 7460, "LAX": 8350, "HKG": 3720, "IST": 1930, "AUH": 0, "DOH": 225
+    },
+    "DOH": {
+        "SFO": 8145, "BOM": 1260, "LHR": 3250, "DXB": 235, "PEK": 3900,
+        "SIN": 3680, "JFK": 6690, "CDG": 3090, "FRA": 2850, "NRT": 4710,
+        "SYD": 7485, "LAX": 8380, "HKG": 3750, "IST": 1780, "AUH": 225, "DOH": 0
+    }
+}
+
+'''
+distance_data = {
+    "SFO": {
+        "SFO": 0, "BOM": 8450, "LHR": 5360, "DXB": 8090, "PEK": 5570, 
         "SIN": 8446, "JFK": 2586, "CDG": 5565, "FRA": 5690, "NRT": 5120
     },
     "BOM": {
@@ -100,6 +184,7 @@ distance_data = {
         "SIN": 3330, "JFK": 6730, "CDG": 6050, "FRA": 5930, "NRT": 0
     }
 }
+'''
 
 
 # Function to build graph from flight data
@@ -247,7 +332,7 @@ def available_flights(
             return outgoing_flights
         
         #else return flights on the user specified travel_day
-        return [(destination, flight) for destination, flight in flights if travel_day in flight.get('days', [])]
+        return [(destination, flight) for destination, flight in outgoing_flights if travel_day in flight.get('days', [])]
     
     
     #Check layover time when not at starting airport
