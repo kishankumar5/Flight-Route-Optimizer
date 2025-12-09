@@ -389,16 +389,39 @@ def main():
             st.markdown("---")
             st.subheader("Other Available Routes")
             
-            # Display each alternative route in an expander
-            for idx, (route, total_cost) in enumerate(route_costs[1:], start=2):
-                # Format route path for header
-                airports_list = [source] + [leg[0] for leg in route]
-                route_path = " → ".join(airports_list)
+            # Group routes by number of layovers
+            routes_by_layovers = {}
+            for route, total_cost in route_costs[1:]:
+                num_layovers = len(route) - 1  # Number of layovers is flights - 1
+                if num_layovers not in routes_by_layovers:
+                    routes_by_layovers[num_layovers] = []
+                routes_by_layovers[num_layovers].append((route, total_cost))
+            
+            # Sort by layovers (ascending) and display
+            route_counter = 2
+            for num_layovers in sorted(routes_by_layovers.keys()):
+                # Sort routes with same layovers by cost (low to high)
+                sorted_routes = sorted(
+                    routes_by_layovers[num_layovers],
+                    key=lambda x: x[1]
+                )
                 
-                # Display route in expander
-                with st.expander(f"Route {idx}: {route_path} | ${total_cost}"):
-                    st.markdown("##### Flight Details")
-                    render_route_details(source, route, show_separator=True)
+                # Display layover group header
+                layover_label = f"{num_layovers} Layover{'s' if num_layovers != 1 else ''}"
+                st.markdown(f"##### {layover_label}")
+                
+                # Display each route in this group
+                for route, total_cost in sorted_routes:
+                    # Format route path for header
+                    airports_list = [source] + [leg[0] for leg in route]
+                    route_path = " → ".join(airports_list)
+                    
+                    # Display route in expander
+                    with st.expander(f"Route {route_counter}: {route_path} | ${total_cost}"):
+                        st.markdown("##### Flight Details")
+                        render_route_details(source, route, show_separator=True)
+                    
+                    route_counter += 1
 
 
 # ============================================================================
