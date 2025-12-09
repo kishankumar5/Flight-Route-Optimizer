@@ -6,7 +6,9 @@
 import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Tuple, Optional
-
+from queue import PriorityQueue
+from typing import List, Tuple
+from itertools import count
 # Storing flight as a dictionary 
 # Example: {"flight_no": "AA101", "airline": "American Airlines", ..}
 
@@ -193,8 +195,6 @@ def format_duration(minutes: float) -> str:
 
 
 def parse_time(time_string: str) -> datetime:
-    # Convert time string '02:30' to datetime object to facilitate time calculations
-    
     return datetime.strptime(time_string, "%H:%M")
 
 
@@ -341,6 +341,88 @@ def get_next_available_day(current_date_str: str) -> Optional[str]: #retruns nex
     except Exception:
         return None
     
+class PriorityQ():
+    def __init__(self):
+        self.min_heap = PriorityQueue()
+        self.max_heap = PriorityQueue()
+    def put(self,priority,data):
+        self.min_heap.put((priority,data))
+        self.max_heap.put((-priority,data))
+    def get(self,type='min'):
+        return self.min_heap.get()[1] if type.lower() == "min" else self.max_heap.get()[1]
+    def empty(self,type='min'):
+        return self.min_heap.empty() if type.lower() == "min" else self.max_heap.empty()    
+
+def parse_time(time_str):
+    """Parses 'HH:MM' into datetime.timedelta"""
+    h, m = map(int, time_str.split(":"))
+    return timedelta(hours=h, minutes=m)
+
+def flight_duration(flight):
+    """Computes flight duration from departure and arrival GMT"""
+    dep = parse_time(flight['departure_time_gmt'])
+    arr = parse_time(flight['arrival_time_gmt'])
+    duration = arr - dep
+    if duration.total_seconds() < 0:  # crosses midnight
+        duration += timedelta(days=1)
+    return duration.total_seconds() / 3600  # duration in hours
+
+def getOptimalRoute(
+    flights_graph,
+    start: str,
+    destination: str,
+    factor: str = "cost"
+) -> List[Tuple[str, dict]]:
+    """
+    Returns optimal multi-leg route for a given factor ('cost' or 'duration')
+    Duration includes both flight time AND layover time.
+    """
+    pq = PriorityQueue()
+    counter = count()  # unique sequence to break ties
+    
+    # (total_weight, tie_breaker, current_airport, path_so_far, last_arrival_time)
+    pq.put((0, next(counter), start, [], None))
+
+    best = {start: 0}
+
+    while not pq.empty():
+        total_weight, _, airport, path, last_arrival = pq.get()
+
+        if airport == destination:
+            return path
+
+        for next_airport, flight in flights_graph.get(airport, []):
+            if factor == "cost":
+                weight = flight['cost']
+                new_total = total_weight + weight
+                new_arrival = None
+                
+            elif factor == "duration":
+                flight_time = flight_duration(flight)
+                
+                layover = 0
+                if last_arrival is not None:
+                    dep_time = parse_time(flight['departure_time_gmt'])
+                    layover_delta = dep_time - last_arrival
+                    if layover_delta.total_seconds() < 0:
+                        layover_delta += timedelta(days=1)
+                    layover = layover_delta.total_seconds() / 3600
+                
+                weight = flight_time + layover
+                new_total = total_weight + weight
+                new_arrival = parse_time(flight['arrival_time_gmt'])
+            else:
+                raise ValueError("Factor must be 'cost' or 'duration'")
+
+            state_key = (next_airport, str(new_arrival)) if factor == "duration" else next_airport
+            
+            if state_key not in best or new_total < best[state_key]:
+                best[state_key] = new_total
+                pq.put((new_total, next(counter), next_airport, path + [(next_airport, flight)], new_arrival))
+
+    return []
+
+
 
 def dfs_routes_iterative(flights_graph: Graph, 
                          distance_data: DistanceData, 

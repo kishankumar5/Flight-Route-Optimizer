@@ -4,6 +4,7 @@ from datetime import datetime
 from flight_optimizer_backend import (
     build_graph_from_json_data,
     dfs_routes_iterative,
+    getOptimalRoute,
     date_to_weekday,
     distance_data,
     calculate_layover_duration,
@@ -197,47 +198,103 @@ def main():
     # ========================================================================
     # USER INPUT SECTION
     # ========================================================================
-    
+    if "use_max_layovers" not in st.session_state:
+        st.session_state.use_max_layovers = False
+
+    if "get_cheapest_route" not in st.session_state:
+        st.session_state.get_cheapest_route = False
+
+    if "get_fastest_route" not in st.session_state:
+        st.session_state.get_fastest_route = False
+
+
+    # ----------------------------
+    #       TOGGLE FUNCTIONS
+    # ----------------------------
+    def toggle_limit():
+        if st.session_state.use_max_layovers:
+            st.session_state.get_cheapest_route = False
+            st.session_state.get_fastest_route = False
+
+
+    def toggle_cheapest():
+        if st.session_state.get_cheapest_route:
+            st.session_state.use_max_layovers = False
+            st.session_state.get_fastest_route = False
+
+
+    def toggle_fastest():
+        if st.session_state.get_fastest_route:
+            st.session_state.use_max_layovers = False
+            st.session_state.get_cheapest_route = False
+
+
+    # ----------------------------
+    #       INPUT UI BLOCK
+    # ----------------------------
     col1, col2, col3, col4 = st.columns(4)
-    
+
     with col1:
         source = st.selectbox(
             "Source Airport *",
             airports,
             index=airports.index("SFO")
         )
-    
+
     with col2:
         destination = st.selectbox(
             "Destination Airport *",
             airports,
             index=airports.index("BOM")
         )
-    
+
     with col3:
         departure_date = st.date_input(
             "Departure Date (Optional)",
             value=None
         )
-    
+
     with col4:
         departure_time = st.time_input(
             "Departure Time (Optional)",
             value=None
         )
-    
-    # Layover configuration
-    col5 = st.columns(3)[0]
+
+
+    # ----------------------------
+    #    LAYOVER + MODE OPTIONS
+    # ----------------------------
+    col5, col6, col7, col8 = st.columns(4)
+
     with col5:
         use_max_layovers = st.checkbox(
             "Limit Maximum Layovers (Default: 3)",
-            value=False
+            key="use_max_layovers",
+            on_change=toggle_limit
         )
+
         max_layovers = st.number_input(
             "Maximum Layovers",
-            1, 5, 3
-        ) if use_max_layovers else 3
-    
+            min_value=1,
+            max_value=5,
+            value=3
+        ) if st.session_state.use_max_layovers else 3
+
+
+    with col6:
+        get_cheapest_route = st.checkbox(
+            "Cheapest",
+            key="get_cheapest_route",
+            on_change=toggle_cheapest
+        )
+
+
+    with col7:
+        get_fastest_route = st.checkbox(
+            "Fastest",
+            key="get_fastest_route",
+            on_change=toggle_fastest
+        )
     # ========================================================================
     # ROUTE SEARCH
     # ========================================================================
@@ -255,17 +312,30 @@ def main():
             user_departure_time = departure_time.strftime("%H:%M") if departure_time else None
             
             # Execute route search
-            routes = dfs_routes_iterative(
-                graph,
-                distance_data,
-                source,
-                destination,
-                max_layovers=max_layovers,
-                min_layover=90,
-                user_departure_time=user_departure_time,
-                travel_day=travel_day
-            )
-            
+            if st.session_state.use_max_layovers:
+                # BFS with layover limit
+                # remove the below two lines after the comments and replace it with
+                # bfs implementation so that when checked it routes to bfs
+                optimal_route = getOptimalRoute(graph,source,destination,'cost')
+                routes = [optimal_route] if optimal_route else []
+            elif st.session_state.get_cheapest_route:
+                optimal_route = getOptimalRoute(graph,source,destination,'cost')
+                routes = [optimal_route] if optimal_route else []
+            elif st.session_state.get_fastest_route:
+                optimal_route = getOptimalRoute(graph,source,destination,'duration')
+                routes = [optimal_route] if optimal_route else []
+            else:
+                routes = dfs_routes_iterative(
+                    graph,
+                    distance_data,
+                    source,
+                    destination,
+                    max_layovers=max_layovers,
+                    min_layover=90,
+                    user_departure_time=user_departure_time,
+                    travel_day=travel_day
+                )
+            # st.error(routes)
             # Validate results
             if not routes:
                 st.warning("No routes found.")
@@ -282,6 +352,7 @@ def main():
                 [(rt, sum(f["cost"] for _, f in rt)) for rt in complete_routes],
                 key=lambda x: x[1]
             )
+            # st.error(route_costs[0])
         
         # ====================================================================
         # DISPLAY OPTIMAL ROUTE
